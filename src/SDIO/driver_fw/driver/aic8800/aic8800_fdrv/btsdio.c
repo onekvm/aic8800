@@ -86,7 +86,7 @@ static int btsdio_tx_packet(struct btsdio_data *data, struct sk_buff *skb)
 {
 	int err;
 
-	AICBT_INFO("%s", data->hdev->name);
+	AICWFDBG(LOGTRACE, "aic_btsdio: %s, %s\n", data->hdev->name, __func__);
 
 	/* Prepend Type-A header */
 	skb_push(skb, 1);
@@ -95,7 +95,7 @@ static int btsdio_tx_packet(struct btsdio_data *data, struct sk_buff *skb)
 	//bt_data_dump("btwrite", skb->data, skb->len);
 	err = rwnx_sdio_bt_send_req(g_rwnx_plat->sdiodev->rwnx_hw, skb->len, skb);
 	if(err<0){
-		printk("%s rwnx_sdio_bt_send_req error %d",__func__,err);
+		AICBT_ERR("%s rwnx_sdio_bt_send_req error %d", __func__, err);
 		return err;
 	}
 
@@ -112,7 +112,7 @@ static void btsdio_work(struct work_struct *work)
 	struct sk_buff *skb;
 	int err;
 
-	AICBT_INFO("%s,%s", data->hdev->name,__func__);
+	AICWFDBG(LOGTRACE, "aic_btsdio: %s, %s\n", data->hdev->name, __func__);
 
 
 	while ((skb = skb_dequeue(&data->txq))) {
@@ -159,7 +159,7 @@ int bt_sdio_recv(u8 *data,u32 data_len)
 		//kfree_skb(skb);
 		///return 0;
 	//}
-	AICBT_INFO("skb type %d",type);
+	AICWFDBG(LOGTRACE, "aic_btsdio: skb type %d\n", type);
 	//bt_data_dump("bt_skb", skb, skb->len);
 	ret = hci_recv_frame(hdev, skb);
 	if(ret < 0){
@@ -204,7 +204,7 @@ static int btsdio_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
 {
 	struct btsdio_data *data = hci_get_drvdata(hdev);
 
-	AICBT_INFO("%s,%s", hdev->name,__func__);
+	AICWFDBG(LOGTRACE, "aic_btsdio: %s, %s\n", hdev->name, __func__);
 
 	switch (hci_skb_pkt_type(skb)) {
 	case HCI_COMMAND_PKT:
@@ -253,8 +253,6 @@ int btsdio_init(void)
 
 	hdev->bus = HCI_SDIO;
 	hci_set_drvdata(hdev, data);
-
-	hdev->dev_type = HCI_PRIMARY;
 
 	data->hdev = hdev;
 

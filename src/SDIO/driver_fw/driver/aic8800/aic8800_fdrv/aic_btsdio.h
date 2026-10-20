@@ -11,6 +11,8 @@
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/poll.h>
+#include <linux/printk.h>
+#include <linux/ratelimit.h>
 
 #include <linux/version.h>
 #include <linux/pm_runtime.h>
@@ -31,17 +33,10 @@
 #define PRINT_ACL_DATA          1
 #define PRINT_SCO_DATA          1
 
-#define AICBT_DBG_FLAG          1
-
-#if AICBT_DBG_FLAG
-#define AICBT_DBG(fmt, arg...) printk( "aic_btsdio: " fmt "\n" , ## arg)
-#else
-#define AICBT_DBG(fmt, arg...)
-#endif
-
-#define AICBT_INFO(fmt, arg...) printk("aic_btsdio: " fmt "\n" , ## arg)
-#define AICBT_WARN(fmt, arg...) printk("aic_btsdio: " fmt "\n" , ## arg)
-#define AICBT_ERR(fmt, arg...) printk("aic_btsdio: " fmt "\n" , ## arg)
+#define AICBT_DBG(fmt, arg...) pr_debug("aic_btsdio: " fmt "\n", ##arg)
+#define AICBT_INFO(fmt, arg...) pr_info("aic_btsdio: " fmt "\n", ##arg)
+#define AICBT_WARN(fmt, arg...) pr_warn_ratelimited("aic_btsdio: " fmt "\n", ##arg)
+#define AICBT_ERR(fmt, arg...) pr_err_ratelimited("aic_btsdio: " fmt "\n", ##arg)
 
 #if LINUX_VERSION_CODE > KERNEL_VERSION(3, 4, 0)
 #define GET_DRV_DATA(x)        hci_get_drvdata(x)
