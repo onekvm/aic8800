@@ -19,3 +19,12 @@
 
 # Output folder
 /out
+
+# In-tree kernel module outputs
+*.o
+*.ko
+*.mod
+*.mod.c
+.*.cmd
+Module.symvers
+modules.order
